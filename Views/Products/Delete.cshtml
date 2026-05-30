@@ -1,0 +1,46 @@
+@model Kiemtragiuaki.Models.Product
+@{
+    ViewData["Title"] = "Xóa Sản Phẩm - FutureTech";
+}
+
+<div class="container my-5 max-width-600">
+    <div class="mb-4">
+        <a asp-action="Index" class="btn btn-sm btn-glass px-3 py-2 text-decoration-none">
+            <i class="bi bi-arrow-left"></i> Quay Lại Danh Sách
+        </a>
+    </div>
+
+    <div class="card-3d p-4 p-md-5" style="background: rgba(255,255,255,0.85);">
+        <div class="text-center mb-4">
+            <i class="bi bi-exclamation-triangle-fill text-danger fs-1"></i>
+            <h3 class="fw-bold font-heading text-slate-800 mt-2">Xác Nhận Xóa Sản Phẩm?</h3>
+            <p class="text-muted small">Hành động này không thể hoàn tác. Bạn có chắc chắn muốn xóa sản phẩm này khỏi hệ thống?</p>
+        </div>
+
+        <div class="p-3 rounded-3 bg-light border border-slate-200 mb-4">
+            <div class="d-flex align-items-center gap-3">
+                <img src="@(string.IsNullOrEmpty(Model.MainImage) ? "https://images.unsplash.com/photo-1547082299-de196ea013d6?auto=format&fit=crop&w=100&q=80" : Model.MainImage)" 
+                     alt="@Model.Name" class="rounded border border-secondary border-opacity-10" style="width: 60px; height: 60px; object-fit: cover;" />
+                <div>
+                    <h6 class="fw-bold text-slate-800 mb-1">@Model.Name</h6>
+                    <div class="small text-muted">
+                        Mã SKU: <strong>@Model.Sku</strong> | Danh mục: <strong>@Model.Category.Name</strong>
+                    </div>
+                    <div class="small text-cyan fw-bold mt-1">
+                        Đơn giá: @Model.Price.ToString("N0")đ
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <form asp-action="Delete" method="post">
+            <input type="hidden" asp-for="Id" />
+            <div class="d-flex gap-3">
+                <a asp-action="Index" class="btn btn-glass flex-grow-1 py-3">Hủy Bỏ</a>
+                <button type="submit" class="btn btn-danger flex-grow-1 py-3 fw-bold">
+                    <i class="bi bi-trash3-fill me-1"></i> Xác Nhận Xóa
+                </button>
+            </div>
+        </form>
+    </div>
+</div>

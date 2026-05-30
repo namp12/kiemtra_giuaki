@@ -1,0 +1,113 @@
+@model IEnumerable<Kiemtragiuaki.Models.Product>
+@{
+    ViewData["Title"] = "Quản Lý Sản Phẩm - FutureTech";
+}
+
+<div class="container my-5">
+    <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap g-3">
+        <div>
+            <h1 class="fw-bold font-heading text-slate-800 mb-1">Quản Lý Sản Phẩm</h1>
+            <p class="text-muted mb-0">Thêm, sửa, xóa sản phẩm trong hệ thống cửa hàng máy tính.</p>
+        </div>
+        <a asp-action="Create" class="btn btn-neon-purple px-4 py-3">
+            <i class="bi bi-plus-circle-fill me-2"></i> Thêm Sản Phẩm Mới
+        </a>
+    </div>
+
+    <!-- Stats summary row -->
+    <div class="row g-4 mb-5">
+        <div class="col-md-4">
+            <div class="metric-card">
+                <i class="bi bi-box-seam fs-3 text-primary mb-2"></i>
+                <div class="metric-num">@Model.Count()</div>
+                <div class="text-muted small">Tổng Số Mặt Hàng</div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="metric-card">
+                <i class="bi bi-stack fs-3 text-success mb-2"></i>
+                <div class="metric-num">@Model.Sum(p => p.Quantity)</div>
+                <div class="text-muted small">Tổng Số Lượng Tồn Kho</div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="metric-card">
+                <i class="bi bi-currency-dollar fs-3 text-warning mb-2"></i>
+                <div class="metric-num">@Model.Average(p => p.Price).ToString("N0")đ</div>
+                <div class="text-muted small">Đơn Giá Trung Bình</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Products Table Glassmorphic -->
+    <div class="card-3d p-4" style="background: rgba(255,255,255,0.85);">
+        <div class="table-responsive">
+            <table class="table table-hover border-secondary border-opacity-10 align-middle">
+                <thead>
+                    <tr class="text-secondary small font-heading">
+                        <th style="width: 80px;">Hình ảnh</th>
+                        <th>Mã SKU</th>
+                        <th>Tên sản phẩm</th>
+                        <th>Danh mục</th>
+                        <th>Thương hiệu</th>
+                        <th class="text-end">Đơn giá</th>
+                        <th class="text-center">Tồn kho</th>
+                        <th class="text-center">Nổi bật</th>
+                        <th class="text-center" style="width: 180px;">Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>
+                                <img src="@(string.IsNullOrEmpty(item.MainImage) ? "https://images.unsplash.com/photo-1547082299-de196ea013d6?auto=format&fit=crop&w=100&q=80" : item.MainImage)" 
+                                     alt="@item.Name" class="rounded border border-secondary border-opacity-10" style="width: 50px; height: 50px; object-fit: cover;" />
+                            </td>
+                            <td class="font-heading fw-semibold small text-muted">@item.Sku</td>
+                            <td>
+                                <span class="fw-bold text-slate-800 text-truncate-1 d-inline-block" style="max-width: 220px;" title="@item.Name">
+                                    @item.Name
+                                </span>
+                            </td>
+                            <td>
+                                <span class="badge bg-light text-dark border border-secondary border-opacity-10 rounded px-2 py-1 small">
+                                    @item.Category.Name
+                                </span>
+                            </td>
+                            <td>
+                                <span class="badge bg-light text-dark border border-secondary border-opacity-10 rounded px-2 py-1 small">
+                                    @item.Brand.Name
+                                </span>
+                            </td>
+                            <td class="text-end fw-bold font-heading text-cyan">
+                                @item.Price.ToString("N0")đ
+                            </td>
+                            <td class="text-center font-heading">@item.Quantity</td>
+                            <td class="text-center">
+                                @if (item.Featured == true)
+                                {
+                                    <span class="text-warning"><i class="bi bi-star-fill star-glow"></i></span>
+                                }
+                                else
+                                {
+                                    <span class="text-muted"><i class="bi bi-star"></i></span>
+                                }
+                            </td>
+                            <td>
+                                <div class="d-flex gap-2 justify-content-center">
+                                    <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-glass text-warning border-warning border-opacity-20 px-2 py-1" title="Sửa">
+                                        <i class="bi bi-pencil-square"></i> Sửa
+                                    </a>
+                                    <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-glass text-danger border-danger border-opacity-20 px-2 py-1" title="Xóa">
+                                        <i class="bi bi-trash-fill"></i> Xóa
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

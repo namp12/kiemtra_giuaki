@@ -1,0 +1,224 @@
+@model Kiemtragiuaki.Models.Product
+@{
+    ViewData["Title"] = Model.Name + " - FutureTech";
+    var discountPrice = Model.DiscountPercent > 0 ? (Model.Price * (100 - Model.DiscountPercent.Value) / 100) : Model.Price;
+}
+
+<div class="container my-5">
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index" class="text-info text-decoration-none">Trang Chủ</a></li>
+            <li class="breadcrumb-item"><a href="/#catalog" class="text-info text-decoration-none">Sản Phẩm</a></li>
+            <li class="breadcrumb-item active text-muted" aria-current="page">@Model.Name</li>
+        </ol>
+    </nav>
+
+    <!-- Main Detail Row -->
+    <div class="row g-5">
+        <!-- Product Images Column -->
+        <div class="col-lg-6">
+            <div class="card-3d p-2 shadow-lg mb-4" style="border: 1px solid rgba(255,255,255,0.15); transform-style: preserve-3d; perspective: 1000px;">
+                <div class="position-relative overflow-hidden rounded-3" style="height: 400px; background: rgba(0, 0, 0, 0.25);">
+                    <img src="@(string.IsNullOrEmpty(Model.MainImage) ? "https://images.unsplash.com/photo-1547082299-de196ea013d6?auto=format&fit=crop&w=600&q=80" : Model.MainImage)" 
+                         alt="@Model.Name" class="w-100 h-100 object-fit-cover" id="mainProductImage" />
+                    
+                    @if (Model.DiscountPercent > 0)
+                    {
+                        <span class="position-absolute top-0 start-0 m-3 badge bg-danger rounded-pill font-heading px-3 py-2 fs-6">
+                            <i class="bi bi-percent"></i> GIẢM @Model.DiscountPercent%
+                        </span>
+                    }
+                </div>
+            </div>
+
+            <!-- Image Gallery -->
+            <div class="d-flex gap-3 overflow-x-auto pb-2">
+                <div class="border border-secondary border-opacity-25 rounded-3 p-1 cursor-pointer bg-dark bg-opacity-20" onclick="changeImage('@Model.MainImage')">
+                    <img src="@(string.IsNullOrEmpty(Model.MainImage) ? "https://images.unsplash.com/photo-1547082299-de196ea013d6?auto=format&fit=crop&w=600&q=80" : Model.MainImage)" 
+                         style="width: 80px; height: 60px; object-fit: cover;" class="rounded" />
+                </div>
+                @foreach (var img in Model.ProductImages.OrderBy(i => i.SortOrder))
+                {
+                    <div class="border border-secondary border-opacity-25 rounded-3 p-1 cursor-pointer bg-dark bg-opacity-20" onclick="changeImage('@img.ImageUrl')">
+                        <img src="@img.ImageUrl" style="width: 80px; height: 60px; object-fit: cover;" class="rounded" />
+                    </div>
+                }
+            </div>
+        </div>
+
+        <!-- Product Info Column -->
+        <div class="col-lg-6">
+            <div class="d-flex flex-wrap gap-2 align-items-center mb-3">
+                <span class="badge-glass-cyan"><i class="bi bi-laptop"></i> @Model.Category.Name</span>
+                <span class="badge-glass-purple"><i class="bi bi-cpu"></i> @Model.Brand.Name (@Model.Brand.Country)</span>
+                <span class="text-muted ms-2"><i class="bi bi-eye"></i> @Model.Views Lượt xem</span>
+            </div>
+
+            <h1 class="fw-bold font-heading text-white mb-3">@Model.Name</h1>
+
+            <!-- Ratings Summary -->
+            <div class="d-flex align-items-center gap-2 mb-4">
+                <div class="d-flex text-warning">
+                    <i class="bi bi-star-fill star-glow"></i>
+                    <i class="bi bi-star-fill star-glow"></i>
+                    <i class="bi bi-star-fill star-glow"></i>
+                    <i class="bi bi-star-fill star-glow"></i>
+                    <i class="bi bi-star-fill star-glow"></i>
+                </div>
+                <span class="text-white small">(5.0 / 5)</span>
+                <span class="text-muted">|</span>
+                <span class="text-info small">@Model.Reviews.Count đánh giá</span>
+            </div>
+
+            <!-- Price Detail -->
+            <div class="p-4 rounded-4 bg-dark bg-opacity-40 border border-secondary border-opacity-25 mb-4">
+                <div class="small text-muted mb-1">Giá bán lẻ:</div>
+                <div class="d-flex align-items-center gap-3 flex-wrap">
+                    <span class="fs-1 fw-extrabold text-cyan font-heading">@discountPrice.ToString("N0")đ</span>
+                    @if (Model.DiscountPercent > 0)
+                    {
+                        <span class="text-muted text-decoration-line-through fs-4 font-heading">@Model.Price.ToString("N0")đ</span>
+                        <span class="badge bg-danger rounded-pill px-3 py-1 font-heading">-@Model.DiscountPercent%</span>
+                    }
+                </div>
+                <div class="text-success mt-2 small">
+                    <i class="bi bi-check-circle-fill"></i> Còn hàng: <strong>@Model.Quantity</strong> sản phẩm có sẵn tại kho
+                </div>
+            </div>
+
+            <!-- Short Description -->
+            <div class="mb-4">
+                <h5 class="fw-bold text-white mb-2">Mô tả tóm tắt:</h5>
+                <p class="text-muted">@Model.ShortDescription</p>
+            </div>
+
+            <!-- Actions -->
+            <div class="d-flex gap-3 mb-5">
+                <button class="btn btn-lg btn-neon-cyan flex-grow-1 py-3" onclick="addToCart(@Model.Id, '@Model.Name.Replace("'", "\\'")', @discountPrice, '@Model.MainImage')">
+                    <i class="bi bi-cart-plus-fill me-2"></i> Thêm Vào Giỏ Hàng
+                </button>
+                <button class="btn btn-lg btn-neon-purple px-4" onclick="alert('Mua ngay sản phẩm này!')">
+                    Mua Ngay
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Details and Specs Tabs -->
+    <div class="row mt-5">
+        <div class="col-12">
+            <div class="card-3d p-4" style="background: rgba(25, 20, 38, 0.5);">
+                <ul class="nav nav-tabs border-secondary border-opacity-25 mb-4" id="productTabs" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active text-white border-0 bg-transparent font-heading fw-bold pb-3 px-4 position-relative" id="desc-tab" data-bs-toggle="tab" data-bs-target="#desc-content" type="button" role="tab">
+                            Thông Tin Chi Tiết
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link text-white border-0 bg-transparent font-heading fw-bold pb-3 px-4 position-relative" id="specs-tab" data-bs-toggle="tab" data-bs-target="#specs-content" type="button" role="tab">
+                            Thông Số Kỹ Thuật
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link text-white border-0 bg-transparent font-heading fw-bold pb-3 px-4 position-relative" id="reviews-tab" data-bs-toggle="tab" data-bs-target="#reviews-content" type="button" role="tab">
+                            Đánh Giá (@Model.Reviews.Count)
+                        </button>
+                    </li>
+                </ul>
+
+                <div class="tab-content" id="productTabsContent">
+                    <!-- Description Content -->
+                    <div class="tab-pane fade show active text-muted" id="desc-content" role="tabpanel">
+                        <p style="line-height: 1.8;">@Model.FullDescription</p>
+                    </div>
+
+                    <!-- Specs Content -->
+                    <div class="tab-pane fade" id="specs-content" role="tabpanel">
+                        <div class="table-responsive">
+                            <table class="table table-dark table-hover border-secondary border-opacity-25 align-middle">
+                                <tbody>
+                                    @if (!Model.Specifications.Any())
+                                    {
+                                        <!-- Mock specs if db doesn't have it -->
+                                        <tr>
+                                            <td class="fw-bold text-white border-secondary border-opacity-25" style="width: 30%;">CPU</td>
+                                            <td class="text-muted border-secondary border-opacity-25">Mạnh mẽ thế hệ mới</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="fw-bold text-white border-secondary border-opacity-25">Bộ nhớ RAM</td>
+                                            <td class="text-muted border-secondary border-opacity-25">16GB / 32GB High Speed</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="fw-bold text-white border-secondary border-opacity-25">Ổ cứng lưu trữ</td>
+                                            <td class="text-muted border-secondary border-opacity-25">SSD NVMe Siêu tốc</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="fw-bold text-white border-secondary border-opacity-25">Bảo hành</td>
+                                            <td class="text-muted border-secondary border-opacity-25">24 tháng chính hãng</td>
+                                        </tr>
+                                    }
+                                    else
+                                    {
+                                        @foreach (var spec in Model.Specifications.OrderBy(s => s.SortOrder))
+                                        {
+                                            <tr>
+                                                <td class="fw-bold text-white border-secondary border-opacity-25" style="width: 30%;">@spec.SpecName</td>
+                                                <td class="text-muted border-secondary border-opacity-25">@spec.SpecValue</td>
+                                            </tr>
+                                        }
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Reviews Content -->
+                    <div class="tab-pane fade text-muted" id="reviews-content" role="tabpanel">
+                        @if (!Model.Reviews.Any())
+                        {
+                            <div class="text-center py-4">
+                                <i class="bi bi-chat-left-heart fs-2 text-info mb-2"></i>
+                                <p>Chưa có đánh giá nào cho sản phẩm này. Hãy là người đầu tiên đánh giá!</p>
+                            </div>
+                        }
+                        else
+                        {
+                            @foreach (var review in Model.Reviews)
+                            {
+                                <div class="border-bottom border-secondary border-opacity-25 pb-4 mb-4">
+                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                        <h6 class="fw-bold text-white mb-0">@review.Customer.Fullname</h6>
+                                        <small class="text-muted">@review.CreatedAt?.ToString("dd/MM/yyyy")</small>
+                                    </div>
+                                    <div class="d-flex text-warning mb-2">
+                                        @for (int i = 0; i < 5; i++)
+                                        {
+                                            if (i < review.Rating)
+                                            {
+                                                <i class="bi bi-star-fill star-glow"></i>
+                                            }
+                                            else
+                                            {
+                                                <i class="bi bi-star"></i>
+                                            }
+                                        }
+                                    </div>
+                                    <p class="mb-0 text-muted">@review.Comment</p>
+                                </div>
+                            }
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function changeImage(url) {
+        if (url) {
+            document.getElementById('mainProductImage').src = url;
+        }
+    }
+</script>

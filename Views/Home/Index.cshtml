@@ -1,0 +1,217 @@
+@model IEnumerable<Kiemtragiuaki.Models.Product>
+@{
+    ViewData["Title"] = "Trang Chủ - FutureTech Computer Store";
+    var categories = ViewBag.Categories as List<Kiemtragiuaki.Models.Category> ?? new List<Kiemtragiuaki.Models.Category>();
+    var brands = ViewBag.Brands as List<Kiemtragiuaki.Models.Brand> ?? new List<Kiemtragiuaki.Models.Brand>();
+    var selectedCategory = ViewBag.SelectedCategory as int?;
+    var selectedBrand = ViewBag.SelectedBrand as int?;
+    var searchString = ViewBag.SearchString as string;
+}
+
+<!-- Hero Section -->
+<section class="hero-section mb-5 position-relative">
+    <div class="hero-glow"></div>
+    <div class="hero-glow-cyan"></div>
+    <div class="container position-relative z-1">
+        <div class="row align-items-center g-5">
+            <div class="col-lg-6 text-center text-lg-start">
+                <span class="badge-glass-cyan mb-3 d-inline-block">
+                    <i class="bi bi-rocket-takeoff-fill me-1"></i> THẾ HỆ MỚI 2026
+                </span>
+                <h1 class="hero-title">
+                    Máy Tính & Linh Kiện <br />
+                    <span class="hero-gradient-text">Tương Lai 3D</span>
+                </h1>
+                <p class="text-muted fs-5 mb-4 max-width-500">
+                    Khám phá kho linh kiện PC, Laptop Gaming và phụ kiện đỉnh cao với công nghệ phân phối hiện đại nhất.
+                </p>
+                <div class="d-flex flex-wrap gap-3 justify-content-center justify-content-lg-start">
+                    <a href="#catalog" class="btn btn-lg btn-neon-cyan px-4 py-3">
+                        <i class="bi bi-bag-check-fill me-2"></i> Mua Sắm Ngay
+                    </a>
+                    <a href="#metrics" class="btn btn-lg btn-glass px-4 py-3">
+                        <i class="bi bi-bar-chart-fill me-2"></i> Xem Thống Kê
+                    </a>
+                </div>
+            </div>
+            <div class="col-lg-6 d-flex justify-content-center">
+                <!-- Floating 3D Graphic -->
+                <div class="card-3d floating-3d shadow-lg" style="width: 380px; transform-style: preserve-3d; border: 1px solid rgba(255,255,255,0.15);">
+                    <div class="card-3d-img-container" style="height: 240px;">
+                        <img src="https://images.unsplash.com/photo-1587831990711-23ca6441447b?auto=format&fit=crop&w=600&q=80" alt="GPU RTX 4090" class="card-3d-img" />
+                        <div class="position-absolute top-0 right-0 m-3">
+                            <span class="badge bg-danger rounded-pill px-3 py-2 fw-bold">HOT</span>
+                        </div>
+                    </div>
+                    <div class="p-4" style="background: rgba(25, 20, 38, 0.95);">
+                        <span class="text-info font-heading fw-bold small">CARD MÀN HÌNH</span>
+                        <h4 class="fw-bold my-2 font-heading text-white">NVIDIA GeForce RTX 4090</h4>
+                        <div class="d-flex justify-content-between align-items-center mt-3">
+                            <span class="fs-5 fw-extrabold text-cyan font-heading">65.000.000đ</span>
+                            <span class="badge-glass-purple"><i class="bi bi-cpu-fill"></i> Asus ROG</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Metrics Section -->
+<section id="metrics" class="mb-5">
+    <div class="row g-4">
+        <div class="col-md-3 col-6">
+            <div class="metric-card">
+                <i class="bi bi-laptop fs-2 text-info mb-2"></i>
+                <div class="metric-num">@ViewBag.TotalProducts</div>
+                <div class="text-muted small">Sản Phẩm</div>
+            </div>
+        </div>
+        <div class="col-md-3 col-6">
+            <div class="metric-card">
+                <i class="bi bi-tags fs-2 text-warning mb-2"></i>
+                <div class="metric-num">@ViewBag.TotalCategories</div>
+                <div class="text-muted small">Danh Mục</div>
+            </div>
+        </div>
+        <div class="col-md-3 col-6">
+            <div class="metric-card">
+                <i class="bi bi-patch-check fs-2 text-success mb-2"></i>
+                <div class="metric-num">@ViewBag.TotalBrands</div>
+                <div class="text-muted small">Thương Hiệu</div>
+            </div>
+        </div>
+        <div class="col-md-3 col-6">
+            <div class="metric-card">
+                <i class="bi bi-eye fs-2 text-danger mb-2"></i>
+                <div class="metric-num">@Model.Sum(p => p.Views ?? 0)</div>
+                <div class="text-muted small">Tổng Lượt Xem</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Filter & Search Section -->
+<section id="catalog" class="mb-5">
+    <div class="search-container p-3 mb-4">
+        <form method="get" class="row g-3 align-items-center">
+            <div class="col-lg-4">
+                <div class="d-flex align-items-center bg-dark bg-opacity-50 rounded-3 border border-secondary border-opacity-25 px-2">
+                    <i class="bi bi-search text-muted ms-2"></i>
+                    <input type="text" name="searchString" value="@searchString" class="search-input" placeholder="Tìm sản phẩm, card màn hình, laptop..." />
+                </div>
+            </div>
+            <div class="col-md-3 col-sm-6">
+                <select name="categoryId" class="form-select bg-dark text-white border-secondary border-opacity-25 py-2" onchange="this.form.submit()">
+                    <option value="">Tất cả Danh Mục</option>
+                    @foreach (var cat in categories)
+                    {
+                        <option value="@cat.Id" selected="@(selectedCategory == cat.Id ? "selected" : null)">@cat.Name</option>
+                    }
+                </select>
+            </div>
+            <div class="col-md-3 col-sm-6">
+                <select name="brandId" class="form-select bg-dark text-white border-secondary border-opacity-25 py-2" onchange="this.form.submit()">
+                    <option value="">Tất cả Thương Hiệu</option>
+                    @foreach (var brand in brands)
+                    {
+                        <option value="@brand.Id" selected="@(selectedBrand == brand.Id ? "selected" : null)">@brand.Name</option>
+                    }
+                </select>
+            </div>
+            <div class="col-lg-2 d-grid">
+                <button type="submit" class="btn btn-neon-cyan py-2"><i class="bi bi-funnel"></i> Lọc</button>
+            </div>
+        </form>
+    </div>
+
+    @if (!Model.Any())
+    {
+        <!-- Empty Database / No Results Warning -->
+        <div class="text-center py-5 card-3d p-5 max-width-600 mx-auto">
+            <i class="bi bi-database-exclamation fs-1 text-warning mb-3"></i>
+            <h3 class="fw-bold mb-2">Chưa có dữ liệu sản phẩm</h3>
+            <p class="text-muted mb-4">Database của bạn đang trống hoặc không khớp với tiêu chí tìm kiếm. Hãy nhấn nút "Nạp Dữ Liệu Mẫu" để tự động tạo danh mục và sản phẩm mẫu máy tính xịn nhất!</p>
+            
+            <form asp-controller="Home" asp-action="SeedDemoData" method="post" class="d-inline">
+                <button type="submit" class="btn btn-lg btn-neon-purple px-5">
+                    <i class="bi bi-database-fill-gear"></i> Nạp Dữ Liệu Mẫu Ngay
+                </button>
+            </form>
+        </div>
+    }
+    else
+    {
+        <!-- Product Grid -->
+        <div class="row g-4">
+            @foreach (var item in Model)
+            {
+                <div class="col-lg-3 col-md-6 col-sm-12">
+                    <div class="card-3d h-100 d-flex flex-column">
+                        <!-- Product Image & Sale Tag -->
+                        <div class="card-3d-img-container">
+                            <img src="@(string.IsNullOrEmpty(item.MainImage) ? "https://images.unsplash.com/photo-1547082299-de196ea013d6?auto=format&fit=crop&w=600&q=80" : item.MainImage)" 
+                                 alt="@item.Name" class="card-3d-img" />
+                            
+                            @if (item.DiscountPercent > 0)
+                            {
+                                <span class="position-absolute top-0 start-0 m-3 badge bg-danger rounded-pill font-heading px-3 py-2">
+                                    <i class="bi bi-percent"></i> GIẢM @item.DiscountPercent%
+                                </span>
+                            }
+                            
+                            @if (item.Featured == true)
+                            {
+                                <span class="position-absolute top-0 end-0 m-3 badge bg-warning text-dark rounded-pill px-2 py-2">
+                                    <i class="bi bi-star-fill"></i> Nổi Bật
+                                </span>
+                            }
+                        </div>
+
+                        <!-- Card Body -->
+                        <div class="p-4 d-flex flex-column flex-grow-1">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <span class="badge-glass-cyan text-uppercase py-1 px-2" style="font-size: 0.75rem;">@item.Category.Name</span>
+                                <span class="text-muted small"><i class="bi bi-eye"></i> @item.Views</span>
+                            </div>
+                            
+                            <h5 class="fw-bold font-heading text-white mb-2 text-truncate-2" style="height: 48px;" title="@item.Name">
+                                @item.Name
+                            </h5>
+                            
+                            <p class="text-muted small text-truncate-3 flex-grow-1" style="height: 54px;">
+                                @item.ShortDescription
+                            </p>
+
+                            <!-- Pricing -->
+                            <div class="my-3">
+                                @if (item.DiscountPercent > 0)
+                                {
+                                    var salePrice = item.Price * (100 - item.DiscountPercent.Value) / 100;
+                                    <div class="d-flex align-items-baseline gap-2">
+                                        <span class="fs-4 fw-extrabold text-cyan font-heading">@salePrice.ToString("N0")đ</span>
+                                        <span class="text-muted text-decoration-line-through small font-heading">@item.Price.ToString("N0")đ</span>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <span class="fs-4 fw-extrabold text-cyan font-heading">@item.Price.ToString("N0")đ</span>
+                                }
+                            </div>
+
+                            <!-- Footer actions -->
+                            <div class="d-flex gap-2 mt-auto">
+                                <a asp-controller="Home" asp-action="Details" asp-route-id="@item.Id" class="btn btn-neon-purple w-100 py-2">
+                                    <i class="bi bi-eye"></i> Chi Tiết
+                                </a>
+                                <button class="btn btn-glass px-3" onclick="addToCart(@item.Id, '@item.Name.Replace("'", "\\'")', @(item.DiscountPercent > 0 ? (item.Price * (100 - item.DiscountPercent.Value) / 100) : item.Price), '@item.MainImage')">
+                                    <i class="bi bi-cart-plus"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</section>
